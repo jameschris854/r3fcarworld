@@ -6,13 +6,13 @@ import { useControls as useLeva } from 'leva'
 
 const Lamps = ({position,rotation}) => {
 
-    const  { nodes,materials }  = useGLTF('/lowpolylamp.glb')
+    const { nodes,materials }  = useGLTF('/lowpolylamp.glb')
     const targetRef = useRef<Mesh>(null)
     const { debug } = useLeva(`${LEVA_KEY}-physics`, {
         debug: false,
     })
     return <mesh castShadow receiveShadow position={position} rotation={rotation} >
-        <mesh geometry={nodes.Cube.geometry} scale={[0.07,3,0.07]}>
+        <mesh castShadow receiveShadow geometry={nodes.Cube.geometry} scale={[0.07,3,0.07]}>
             <meshPhysicalMaterial
                 color={"#AAAAAA"}
                 metalness={1}

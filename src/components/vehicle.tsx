@@ -179,6 +179,7 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
                         decay={1}
                         distance={20}
                         castShadow
+                        receiveShadow
                         penumbra={1}
                         intensity={20}
                         target={headlightLeftRef.current}
@@ -197,6 +198,7 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
                         decay={1}
                         distance={20}
                         castShadow
+                        receiveShadow
                         penumbra={1}
                         intensity={20}
                         target={headlightRightRef.current}
@@ -205,7 +207,7 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
                         {debug && <Helper type={SpotLightHelper} />}
                     </spotLight>}
                 </Fragment>
-                <mesh>
+                <mesh receiveShadow castShadow>
                     <boxGeometry args={[2,0.5,2]} />
                     <meshPhysicalMaterial
                         color={"#fdfdfd"}

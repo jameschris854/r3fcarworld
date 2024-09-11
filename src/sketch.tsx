@@ -215,10 +215,10 @@ const Ground = () => {
             <Lamps position={[23.5,-1.5,-20]} rotation={[0,Math.PI,0]} />
             <Lamps position={[22.5,-2,-35]} rotation={[0,Math.PI,0]} />
             <TrafficCone position={[-40,-10,22]} />
-            <pointLight color={"orange"} position={[-40,-7,29]} intensity={10} />
+            <pointLight receiveShadow castShadow color={"orange"} position={[-40,-7,29]} intensity={10} />
             <TrafficCone position={[-40,-10,35]} />
             <TrafficCone position={[-22,-11.5,-35]} />
-            <pointLight color={"orange"} position={[-22,-7.5,-40]} intensity={10} />
+            <pointLight  receiveShadow castShadow color={"orange"} position={[-22,-7.5,-40]} intensity={10} />
             <TrafficCone position={[-22,-10.5,-45]} />
             <Float speed={1}>
                 <mesh position={[24.5,-10,-20]} castShadow receiveShadow>
