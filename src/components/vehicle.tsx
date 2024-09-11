@@ -207,7 +207,14 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
                 </Fragment>
                 <mesh>
                     <boxGeometry args={[2,0.5,2]} />
-                    <meshStandardMaterial />
+                    <meshPhysicalMaterial
+                        color={"#fdfdfd"}
+                        metalness={0.2}
+                        roughness={0.3}
+                        reflectivity={0.8}          // Higher reflectivity for a polished steel look
+                        clearcoat={0.1}             // Adds a thin clear coating for a polished effect
+                        clearcoatRoughness={0.1}    // How rough the clear coat is
+                    />
                 </mesh>
             </RigidBody>
             

@@ -13,7 +13,9 @@ const Wheel = forwardRef<Group,WheelProps>(({ side, radius, ...props }: WheelPro
         <group ref={ref}>
             <mesh  castShadow receiveShadow rotation={[Math.PI / 2, 0, 0]}>
                 <cylinderGeometry args={[radius,radius,radius,32]}/>
-                <meshStandardMaterial />
+                <meshStandardMaterial
+                color={"#fdffdf"}
+                />
             </mesh>
         </group>
     )

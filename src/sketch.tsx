@@ -1,7 +1,7 @@
-import { OrbitControls, Stars, useGLTF } from '@react-three/drei'
+import { Environment, Float, OrbitControls, Stars, useGLTF } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Physics, RigidBody, useBeforePhysicsStep } from '@react-three/rapier'
-import { useControls as useLeva } from 'leva'
+import { Leva, useControls as useLeva } from 'leva'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { Fog, Quaternion, Vector3 } from 'three'
@@ -10,6 +10,8 @@ import { AFTER_RAPIER_UPDATE, LEVA_KEY, RAPIER_UPDATE_PRIORITY } from './constan
 import { SpeedTextTunnel } from './constants/speed-text-tunnel'
 import { useControls } from './hooks/use-controls'
 import { useLoadingAssets } from './hooks/use-loading-assets'
+import Lamps from './components/Lamps'
+import TrafficCone from './components/TrafficCone'
 const Text = styled.div`
     text-align: center;
     font-size: 2em;
@@ -161,7 +163,6 @@ const Game = () => {
             {/* <ambientLight intensity={0.1} /> */}
             {/* <Environment preset="sunset" /> */}
             <Stars fade  factor={0} saturation={0}  count={500}/>
-
             {cameraMode === 'orbit' && <OrbitControls />}
         </>
     )
@@ -181,8 +182,8 @@ export function Sketch() {
     return (
         <>
             <Canvas camera={{ fov: 60, position: [0, 30, -20] }} shadows>
-                <color attach="background" args={['#000']} />
-
+                <color attach="background" args={['#030303']} />
+                <Leva hidden />
                 <Physics
                     gravity={[0, -9.81, 0]}
                     updatePriority={RAPIER_UPDATE_PRIORITY}
@@ -205,8 +206,36 @@ const Ground = () => {
     const { nodes ,materials} = useGLTF('/pg.glb');
     console.log(nodes,materials)
     return (
-      <RigidBody type="fixed" colliders={"trimesh"}>
-        <primitive scale={[1,1,1]} position={[0,-10,0]} object={nodes.Plane}/>
-      </RigidBody>
+        <>
+            <RigidBody type="fixed" colliders={"trimesh"}>
+                <primitive scale={[1,1,1]} position={[0,-10,0]} object={nodes.Plane}/>
+            </RigidBody>
+            <Lamps position={[26.5,0,20]} rotation={[0,Math.PI,0]} />
+            <Lamps position={[24.5,-1,0]} rotation={[0,Math.PI,0]} />
+            <Lamps position={[23.5,-1.5,-20]} rotation={[0,Math.PI,0]} />
+            <Lamps position={[22.5,-2,-35]} rotation={[0,Math.PI,0]} />
+            <TrafficCone position={[-40,-10,22]} />
+            <pointLight color={"orange"} position={[-40,-7,29]} intensity={10} />
+            <TrafficCone position={[-40,-10,35]} />
+            <TrafficCone position={[-22,-11.5,-35]} />
+            <pointLight color={"orange"} position={[-22,-7.5,-40]} intensity={10} />
+            <TrafficCone position={[-22,-10.5,-45]} />
+            <Float speed={1}>
+                <mesh position={[24.5,-10,-20]} castShadow receiveShadow>
+                    <sphereGeometry args={[1.5,20,30]} />
+                    <meshStandardMaterial
+                        color="aqua"        // Base color of the material
+                        emissive="aqua"
+                        emissiveIntensity={1}  // Intensity of the emissive effect
+                    />
+                    <pointLight
+                        position={[0, 0, 0]}  // Position (same as the sphere)
+                        intensity={30}       // Brightness of the light
+                        distance={10}         // How far the light reaches
+                        color="aqua"        // Light color (matching the emissive glow)
+                    />
+                </mesh>
+            </Float>
+        </>
     );
   };
