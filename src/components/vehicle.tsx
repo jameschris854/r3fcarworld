@@ -165,7 +165,7 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
     })
     return (
         <>
-            <RigidBody ref={chassisRigidBodyRef} {...groupProps}  position={[0,0,-1]} mass={150}>
+            <RigidBody ref={chassisRigidBodyRef} {...groupProps}  position={[-45,-7.7,-1]} mass={150}>
                 {/* <CuboidCollider args={[2.35, 0.55, 2]} /> */}
                 
                 <Fragment key={0}>
