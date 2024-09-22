@@ -6,7 +6,7 @@ import { useControls as useLeva } from 'leva'
 
 const Lamps = ({position,rotation}) => {
 
-    const { nodes,materials }  = useGLTF('/lowpolylamp.glb')
+    const { nodes }  = useGLTF('/lowpolylamp.glb')
     const targetRef = useRef<Mesh>(null)
     const { debug } = useLeva(`${LEVA_KEY}-physics`, {
         debug: false,
@@ -25,9 +25,9 @@ const Lamps = ({position,rotation}) => {
         <mesh ref={targetRef} position={[-4,-5,0]} >
             <boxGeometry args={[0,0,0]} />
         </mesh>
-        {targetRef.current && <spotLight
+        <spotLight
             position={[-1.3,3,0]}
-            target={targetRef.current}
+            {...targetRef.current ? {target: targetRef.current} : {}}
             angle={1.5}
             decay={1}
             distance={20}
@@ -37,7 +37,7 @@ const Lamps = ({position,rotation}) => {
             intensity={20}
         >
             {debug && <Helper type={SpotLightHelper} />}
-        </spotLight>}
+        </spotLight>
     </mesh>
 }
 

@@ -1,14 +1,15 @@
 import React from 'react'
-import { CuboidCollider, RapierRigidBody, RigidBody, RigidBodyProps, useRapier } from '@react-three/rapier'
+import { RapierRigidBody, RigidBody, RigidBodyProps, useRapier } from '@react-three/rapier'
 import { useControls as useLeva } from 'leva'
 import { Fragment, RefObject, forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import {  Group,  Mesh,  Object3D, SpotLightHelper, Vector3 } from 'three'
+import {  Color, Group,  Mesh,  Object3D, Vector3 } from 'three'
 import { LEVA_KEY } from '../constants'
 import { RapierRaycastVehicle, WheelOptions } from '../lib/rapier-raycast-vehicle'
 
 import Wheel from './Wheel'
-import { Helper, SpotLight } from '@react-three/drei'
-import { rotate } from 'three/webgpu'
+import commonStore from '../stores/commonStore'
+import { invalidate, useFrame } from '@react-three/fiber'
+import CarHeadLights from './CarHeadLights'
 
 
 type RaycastVehicleWheel = {
@@ -23,7 +24,10 @@ export type VehicleRef = {
     rapierRaycastVehicle: RefObject<RapierRaycastVehicle>
     wheels: RaycastVehicleWheel[]
     setBraking: (braking: boolean) => void
+    reset: () => void
 }
+
+const DEFAULT_VEHICLE_POS = new Vector3(-45,-7.7,-1)
 
 export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...groupProps }, ref) => {
     const rapier = useRapier()
@@ -34,6 +38,7 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
     const topRightWheelObject = useRef<Group>(null!)
     const bottomLeftWheelObject = useRef<Group>(null!)
     const bottomRightWheelObject = useRef<Group>(null!)
+    const {camera: currentCam , changeCamera }= commonStore();
 
     const {
         indexRightAxis,
@@ -127,6 +132,14 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
             // const material = brakeLightsRef.current.material as MeshStandardMaterial
             // material.color = braking ? BRAKE_LIGHTS_ON_COLOR : BRAKE_LIGHTS_OFF_COLOR
         },
+        reset: () => {
+            chassisRigidBodyRef.current.setTranslation(DEFAULT_VEHICLE_POS);
+            // Reset the chassis's linear and angular velocity to stop it
+            chassisRigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 });
+            chassisRigidBodyRef.current.setAngvel({ x: 0, y: 0, z: 0 });
+            // Optionally reset the rotation to avoid flipping issues
+            chassisRigidBodyRef.current.setRotation({ x: 0, y: -Math.PI/3, z: 0, w: 1 });
+        },
         wheels,
     }))
 
@@ -155,59 +168,35 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
         axleLocal,
         levaWheelOptions,
     ])
-    const headlightLeftRef = useRef<Mesh>();
-    const headlightPositionLeft = new Vector3(2.1,0,-1)
 
-    const headlightRightRef = useRef<Mesh>();
-    const headlightPositionRight = new Vector3(2.1,0,1)
-    const { debug } = useLeva(`${LEVA_KEY}-physics`, {
-        debug: true,
+    const bodyRef = useRef<Mesh>(null);
+    let bodyHover = false;
+
+    useFrame(() => {
+        if(bodyRef.current && currentCam !== "followCamClose"){
+            let material = bodyRef.current.material;
+            console
+            if(bodyHover){
+                console.log(bodyRef.current.material)
+                material.emissive.set(new Color("red")); // Yellow highlight
+                material.emissiveIntensity = 0.1; // Make it glow
+            }else{
+                material.emissive.set('#fdfdfd'); // Reset to no emission
+                material.emissiveIntensity = 0; // Make it glow
+            }
+        }
     })
+
+
     return (
         <>
-            <RigidBody ref={chassisRigidBodyRef} {...groupProps}  position={[-45,-7.7,-1]} mass={150}>
+            <RigidBody ref={chassisRigidBodyRef} {...groupProps}  position={DEFAULT_VEHICLE_POS} mass={150}>
                 {/* <CuboidCollider args={[2.35, 0.55, 2]} /> */}
                 
                 <Fragment key={0}>
-                    <mesh ref={headlightLeftRef} position={headlightPositionLeft}>
-                        <cylinderGeometry args={[0,0,0]} />
-                    </mesh>
-                    {topLeftWheelObject.current && <spotLight
-                        position={[headlightPositionLeft.x-1,0,headlightPositionLeft.z]}
-                        rotation={[Math.PI / 2, Math.PI / 4, 0]} // Rotation in radians
-                        angle={0.8}
-                        decay={1}
-                        distance={20}
-                        castShadow
-                        receiveShadow
-                        penumbra={1}
-                        intensity={20}
-                        target={headlightLeftRef.current}
-
-                    >
-                        {debug && <Helper type={SpotLightHelper} />}
-                    </spotLight>}
-
-                    <mesh ref={headlightRightRef} position={headlightPositionRight}>
-                        <cylinderGeometry args={[0,0,0]} />
-                    </mesh>
-                    {topLeftWheelObject.current && <spotLight
-                        position={[headlightPositionRight.x-1,0,headlightPositionRight.z]}
-                        rotation={[Math.PI / 2, Math.PI / 4, 0]} // Rotation in radians
-                        angle={0.8}
-                        decay={1}
-                        distance={20}
-                        castShadow
-                        receiveShadow
-                        penumbra={1}
-                        intensity={20}
-                        target={headlightRightRef.current}
-
-                    >
-                        {debug && <Helper type={SpotLightHelper} />}
-                    </spotLight>}
+                   <CarHeadLights />
                 </Fragment>
-                <mesh receiveShadow castShadow>
+                <mesh ref={bodyRef}  onPointerEnter={(e) => {bodyHover=true;e.stopPropagation()}} onPointerOut={(e) => {bodyHover=false;e.stopPropagation()}} receiveShadow castShadow onClick={(e) => {changeCamera("followCamClose");invalidate();e.stopPropagation()}}>
                     <boxGeometry args={[2,0.5,2]} />
                     <meshPhysicalMaterial
                         color={"#fdfdfd"}

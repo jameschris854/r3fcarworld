@@ -1,5 +1,4 @@
-import { Environment, Float, Helper, OrbitControls, Stars, useGLTF } from '@react-three/drei'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Physics, RigidBody, useBeforePhysicsStep } from '@react-three/rapier'
 import { Leva, useControls as useLeva } from 'leva'
 import React, { Suspense, useEffect, useRef } from 'react'
@@ -9,9 +8,7 @@ import { Vehicle, VehicleRef } from './components/vehicle'
 import { AFTER_RAPIER_UPDATE, LEVA_KEY, RAPIER_UPDATE_PRIORITY } from './constants'
 import { SpeedTextTunnel } from './constants/speed-text-tunnel'
 import { useControls } from './hooks/use-controls'
-import { useLoadingAssets } from './hooks/use-loading-assets'
-import Lamps from './components/Lamps'
-import TrafficCone from './components/TrafficCone'
+import commonStore from './stores/commonStore'
 
 const Text = styled.div`
     text-align: center;
@@ -26,9 +23,6 @@ const SpeedText = styled(Text)`
     bottom: 3em;
     left: 2em;
 `
-useGLTF.preload('/boxworld.glb');
-useGLTF.preload('/Water_001_DISP.glb');
-useGLTF.preload('/Water_001_NORM.glb');
 
 const cameraIdealOffset = new Vector3()
 const cameraIdealLookAt = new Vector3()
@@ -38,18 +32,12 @@ const chassisRotation = new Quaternion()
 const Car = () => {
     const raycastVehicle = useRef<VehicleRef>(null)
     const currentSpeedTextDiv = useRef<HTMLDivElement>(null)
-
     const camera = useThree((state) => state.camera)
     const currentCameraPosition = useRef(new Vector3(15, 15, 0))
     const currentCameraLookAt = useRef(new Vector3())
     const controls = useControls()
 
-    const { cameraMode } : any = useLeva(`${LEVA_KEY}-camera`, {
-        cameraMode: {
-            value: 'drive',
-            options: ['drive', 'orbit'],
-        },
-    })
+    const { camera: currentCam  }= commonStore();
 
     const { maxForce, maxSteer, maxBrake } = useLeva(`${LEVA_KEY}-controls`, {
         maxForce: 5,
@@ -123,48 +111,48 @@ const Car = () => {
         setBraking(brakeForce > 0)
     })
 
-    // useFrame((_, delta) => {
-    //     if (cameraMode !== 'drive') return
+    useFrame((_, delta) => {
+        if(controls.current.reset){
+            raycastVehicle.current?.reset();
+            return;
+        }
+        if (currentCam === 'followCamClose'){
 
-    //     const chassis = raycastVehicle.current?.chassisRigidBody
-    //     if (!chassis?.current) return
-
-    //     chassisRotation.copy(chassis.current.rotation() as Quaternion)
-    //     chassisTranslation.copy(chassis.current.translation() as Vector3)
-
-    //     const t = 1.0 - Math.pow(0.01, delta)
-
-    //     cameraIdealOffset.set(-15, 0, 0)
-    //     cameraIdealOffset.applyQuaternion(chassisRotation)
-    //     cameraIdealOffset.add(chassisTranslation)
-
-    //     if (cameraIdealOffset.y < 0) {
-    //         cameraIdealOffset.y = 0.5
-    //     }
-
-    //     cameraIdealLookAt.set(0, 1, 0)
-    //     cameraIdealLookAt.applyQuaternion(chassisRotation)
-    //     cameraIdealLookAt.add(chassisTranslation)
-
-    //     currentCameraPosition.current.lerp(cameraIdealOffset, t)
-    //     currentCameraLookAt.current.lerp(cameraIdealLookAt, t)
-
-    //     camera.position.copy(currentCameraPosition.current)
-    //     camera.lookAt(currentCameraLookAt.current)
-    // }, AFTER_RAPIER_UPDATE)
+            const chassis = raycastVehicle.current?.chassisRigidBody
+            if (!chassis?.current) return
+    
+            chassisRotation.copy(chassis.current.rotation() as Quaternion)
+            chassisTranslation.copy(chassis.current.translation() as Vector3)
+    
+            const t = 1.0 - Math.pow(0.01, delta)
+    
+            cameraIdealOffset.set(-15, 0, 0)
+            cameraIdealOffset.applyQuaternion(chassisRotation)
+            cameraIdealOffset.add(chassisTranslation)
+    
+            if (cameraIdealOffset.y < 0) {
+                cameraIdealOffset.y = 0.5
+            }
+    
+            cameraIdealLookAt.set(0, 1, 0)
+            cameraIdealLookAt.applyQuaternion(chassisRotation)
+            cameraIdealLookAt.add(chassisTranslation)
+    
+            currentCameraPosition.current.lerp(cameraIdealOffset, t)
+            currentCameraLookAt.current.lerp(cameraIdealLookAt, t)
+    
+            camera.position.copy(currentCameraPosition.current)
+            camera.lookAt(currentCameraLookAt.current)
+        }
+    }, AFTER_RAPIER_UPDATE)
 
     return (
         <>
             <SpeedTextTunnel.In>
                 <SpeedText ref={currentSpeedTextDiv} />
             </SpeedTextTunnel.In>
-            {/* raycast vehicle */}
             <Vehicle ref={raycastVehicle} position={[0, 5, 0]} rotation={[0, -Math.PI / 2, 0]} />
-            {/* <Fog attach="fog" args={['white', 10, 50]} />; // Color and range for fog effect */}
             <hemisphereLight intensity={0.1} />
-            {/* <ambientLight intensity={0.1} /> */}
-            {/* <Environment backgroundIntensity={0.1} environmentIntensity={0.1} preset="sunset" /> */}
-            {cameraMode === 'orbit' && <OrbitControls />}
         </>
     )
 }
