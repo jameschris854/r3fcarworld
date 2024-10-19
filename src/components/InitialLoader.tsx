@@ -39,9 +39,10 @@ const InitialLoader = () => {
         }}>
             <div style={{
                 ...fadeProp, // Apply dynamic opacity
+                padding:'20px',
                 transition: 'opacity 0.5s ease-in-out', // Smooth fade animation for text
                 color: '#ffffff', // Darker color for better readability
-                fontSize: '2rem', // Larger font size
+                fontSize: '18px', // Larger font size
                 fontWeight: 'bold', // Make the text bold
                 textShadow: '1px 1px 5px rgba(0, 0, 0, 0.3)', // Add text shadow for contrast
                 textAlign:'center'

@@ -1,7 +1,7 @@
 .joystick-container{
     width: 100vw;
     position: fixed !important;
-    bottom: 12.5% !important;
+    bottom: 130px !important;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
@@ -17,7 +17,7 @@
     border: solid #000000 !important;
 }
 
-#brake{
+#brake {
     position: absolute;
     display: flex;
     align-items: center;
@@ -28,8 +28,8 @@
     height: 30px;
     border-radius: 10%;
     z-index: 300;
-    right: 90px;
-    bottom: 30px;
+    right: 60px;
+    bottom: 16px;
     cursor: pointer;
 }
 
@@ -45,6 +45,6 @@
     border-radius: 50%;
     z-index: 300;
     right: 15px;
-    bottom: 20px;
+    top: 20px;
     cursor: pointer;
 }

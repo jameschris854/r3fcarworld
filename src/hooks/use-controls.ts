@@ -42,7 +42,7 @@ const useKeyControls = ({ current }: MutableRefObject<Controls>, map: Record<Key
         window.addEventListener('keyup', handleKeyup)
 
         const resetBtn = document.getElementById("reset")
-        resetBtn?.addEventListener('touchend', () => {
+        resetBtn?.addEventListener('touchstart', () => {
             handleKeydown({key:"r"})
         })    
         resetBtn?.addEventListener('mousedown', () => {
@@ -56,7 +56,7 @@ const useKeyControls = ({ current }: MutableRefObject<Controls>, map: Record<Key
         }) 
 
         const brakeBtn = document.getElementById("brake")
-        brakeBtn?.addEventListener('touchend', () => {
+        brakeBtn?.addEventListener('touchstart', () => {
             handleKeydown({key:" "})
         })    
         brakeBtn?.addEventListener('mousedown', () => {

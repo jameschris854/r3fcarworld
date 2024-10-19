@@ -13,9 +13,9 @@ const NeoBlaze = () => {
 
     return (
         <>
+        <Suspense fallback={<InitialLoader />} >
         <button id="reset" >Reset</button>
         <button id="brake" >Brake</button>
-        <Suspense fallback={<InitialLoader />} >
         <Canvas shadows>
             {/* <OrbitControls /> */}
             {Map && Car && <Physics
