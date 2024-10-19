@@ -12,7 +12,7 @@ const CarHeadLights = () => {
     const headlightPositionLeft = useMemo(() => new Vector3(2.5, 0, -1), []);
     const headlightPositionRight = useMemo(() => new Vector3(2.5, 0, 1), []);
 
-    const { debug } = useLeva(`${LEVA_KEY}-physics`, { debug: true });
+    const { debug } = useLeva(`${LEVA_KEY}-physics`, { debug: false });
 
     useEffect(() => {
         // Ensure that the target is updated after mounting

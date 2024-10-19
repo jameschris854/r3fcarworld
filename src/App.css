@@ -1,0 +1,50 @@
+.joystick-container{
+    width: 100vw;
+    position: fixed !important;
+    bottom: 12.5% !important;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+.joystick-controller {
+    right: 30px;
+    background: #ffffff !important;
+    outline: 4px solid #000000;
+}
+
+.joystick {
+    background: #ff8534 !important;
+    border: solid #000000 !important;
+}
+
+#brake{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(192, 68, 68);
+    color: #ffffff;
+    width: 60px;
+    height: 30px;
+    border-radius: 10%;
+    z-index: 300;
+    right: 90px;
+    bottom: 30px;
+    cursor: pointer;
+}
+
+#reset{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(110, 137, 196);
+    color: #ffffff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    z-index: 300;
+    right: 15px;
+    bottom: 20px;
+    cursor: pointer;
+}

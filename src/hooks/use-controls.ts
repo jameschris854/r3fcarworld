@@ -1,3 +1,4 @@
+import JoystickController from 'joystick-controller'
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef } from 'react'
 
@@ -40,9 +41,66 @@ const useKeyControls = ({ current }: MutableRefObject<Controls>, map: Record<Key
         }
         window.addEventListener('keyup', handleKeyup)
 
+        const resetBtn = document.getElementById("reset")
+        resetBtn?.addEventListener('touchend', () => {
+            handleKeydown({key:"r"})
+        })    
+        resetBtn?.addEventListener('mousedown', () => {
+            handleKeydown({key:"r"})
+        })    
+        resetBtn?.addEventListener('mouseup', () => {
+            handleKeyup({key:"r"});
+        })
+        resetBtn?.addEventListener('touchend', () => {
+            handleKeyup({key:"r"});
+        }) 
+
+        const brakeBtn = document.getElementById("brake")
+        brakeBtn?.addEventListener('touchend', () => {
+            handleKeydown({key:" "})
+        })    
+        brakeBtn?.addEventListener('mousedown', () => {
+            handleKeydown({key:" "})
+        })    
+        brakeBtn?.addEventListener('mouseup', () => {
+            handleKeyup({key:" "});
+        })
+        brakeBtn?.addEventListener('touchend', () => {
+            handleKeyup({key:" "});
+        }) 
+
+        const joystick = new JoystickController({
+            containerClass: "joystick-container",
+            controllerClass: "joystick-controller",
+            joystickClass: "joystick",
+        }, (data) => {
+            if(data.y > 50) {
+                handleKeydown({key:"w"})
+            }else{
+                handleKeyup({key:"w"})
+            }         
+            if(data.y < -50){
+                handleKeydown({key:"s"})
+            }else{
+                handleKeyup({key:"s"})
+            }
+            if(data.x > 50){
+                handleKeydown({key:"d"})
+            }else{
+                handleKeyup({key:"d"})
+            }
+            if(data.x < -50){
+                handleKeydown({key:"a"})
+            }else{
+                handleKeyup({key:"a"})
+            }
+        });
         return () => {
             window.removeEventListener('keydown', handleKeydown)
             window.removeEventListener('keyup', handleKeyup)
+            window.removeEventListener('keyup', handleKeyup)
+            // resetBtn?.removeEventListener("keydown")
+            joystick.destroy();
         }
     }, [current, map])
 }

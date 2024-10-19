@@ -195,6 +195,7 @@ export const Vehicle = forwardRef<VehicleRef, VehicleProps>(({ children, ...grou
                 
                 <Fragment key={0}>
                    <CarHeadLights />
+                    <pointLight color={"#ffffff"} intensity={500} position={[10,20,0]} />
                 </Fragment>
                 <mesh ref={bodyRef}  onPointerEnter={(e) => {bodyHover=true;e.stopPropagation()}} onPointerOut={(e) => {bodyHover=false;e.stopPropagation()}} receiveShadow castShadow onClick={(e) => {changeCamera("followCamClose");invalidate();e.stopPropagation()}}>
                     <boxGeometry args={[2,0.5,2]} />

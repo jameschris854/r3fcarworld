@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { Physics, RigidBody, useBeforePhysicsStep } from '@react-three/rapier'
 import { Leva, useControls as useLeva } from 'leva'
-import React, { Suspense, useEffect, useRef } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { DirectionalLightHelper, Fog, Mesh, Quaternion, TextureLoader, Vector3 } from 'three'
 import { Vehicle, VehicleRef } from './components/vehicle'
@@ -146,12 +146,20 @@ const Car = () => {
         }
     }, AFTER_RAPIER_UPDATE)
 
+    const [mountCar,setMountCar] = useState(false);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setMountCar(true)
+        }, 2000);
+    },[])
+
     return (
         <>
             <SpeedTextTunnel.In>
                 <SpeedText ref={currentSpeedTextDiv} />
             </SpeedTextTunnel.In>
-            <Vehicle ref={raycastVehicle} position={[0, 5, 0]} rotation={[0, -Math.PI / 2, 0]} />
+            {mountCar && <Vehicle ref={raycastVehicle} position={[0, 5, 0]} rotation={[0, -Math.PI / 2, 0]} />}
             <hemisphereLight intensity={0.1} />
         </>
     )
